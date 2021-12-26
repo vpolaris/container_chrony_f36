@@ -17,6 +17,6 @@ sudo ./install_chronyd.sh
 To schedule the default service use the following command
 
 ``` sh
-podman run --cap-add SYS_TIME -dt --name chrony-svc --rm -v /etc/chrony.conf:/etc/chrony.conf:ro -p 123:123/udp -t chrony:4.1-1.fc33 
+podman run --cap-add SYS_TIME -dt --name chrony-svc -v /etc/chrony.conf:/etc/chrony.conf:ro -p 123:123/udp -t chrony:4.1-1.fc33 
 ```
 
