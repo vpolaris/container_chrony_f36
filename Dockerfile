@@ -7,5 +7,5 @@ ENV PLATFORM_ID "platform:f33"
 ENV DISTRIB_DESCRIPTION "Fedora 33 Container"
 ENV TZ UTC
 ENV LANG C.UTF-8
-EXPOSE 123/upd
+EXPOSE 123/udp
 CMD /sbin/chronyd -d
