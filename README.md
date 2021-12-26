@@ -6,8 +6,17 @@ Build from scratch a minimal Fedora 33 image with only chrony service implemente
 ## Prerequisites
 You need to build the image on a Fedora server with podman 3.3.1 installed
 
-The process will pull up all packages, install it in a temporary directory, create chrony user do the cleanupn create layer for Dockerfile and build the image container, and finally run a test container
+## Installation
+The process will pull up all packages, install it in a temporary directory, create chrony user do the cleanup. Create layer for Dockerfile and build the image container, and finally run a test container
 
+``` sh
+git clone https://github.com/vpolaris/contenair-tiny-chrony.f33.git
+cd contenair-tiny-chrony.f33 && chmod u+x install_chronyd.sh 
+sudo ./install_chronyd.sh
+```
 To schedule the default service use the following command
 
-```podman run --cap-add SYS_TIME -dt --name chrony-svc --rm -v /etc/chrony.conf:/etc/chrony.conf:ro -p 123:123/udp -t chrony:4.1-1.fc33 ```
+``` sh
+podman run --cap-add SYS_TIME -dt --name chrony-svc --rm -v /etc/chrony.conf:/etc/chrony.conf:ro -p 123:123/udp -t chrony:4.1-1.fc33 
+```
+
