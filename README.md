@@ -52,7 +52,7 @@ podman healthcheck run chrony
 This is the site whare i found the materials
 
 https://github.com/cturra/docker-ntp
-
+https://github.com/moby/moby/blob/master/contrib/mkimage-yum.sh
 
 
 
