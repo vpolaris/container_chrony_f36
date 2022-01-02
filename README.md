@@ -49,7 +49,7 @@ podman healthcheck run chrony
 ![image](https://user-images.githubusercontent.com/73080749/147881721-cd2772a1-7704-48a5-8d73-f3965fca958e.png)
 
 ## sources
-This is the site whare i found the materials
+This is the sites where I found the materials
 
 - https://github.com/cturra/docker-ntp
 - https://github.com/moby/moby/blob/master/contrib/mkimage-yum.sh
