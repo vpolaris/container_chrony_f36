@@ -16,10 +16,26 @@ podman build --cap-add MKNOD --squash-all --build-arg arch=${proc} -v${sysroot}:
 if  [ -f ./layer.tar.xz ]; then rm -rf layer.tar.xz; fi
 tar -cJ -C ${sysroot} . -f layer.tar.xz 
 CHRONYVERSION=$(cat ${sysroot}/chrony.version)
-# podman stop f33.builder
-# podman rm f33.builder
-# podman rmi f33:builder
-podman build --squash-all -t chrony:${CHRONYVERSION} -f ./Dockerfile.chrony
-podman run -ti --rm -v /etc/chrony.conf:/etc/chrony.conf:ro -p 123:123/udp -t chrony:${CHRONYVERSION}
+podman rmi f33:builder
+podman build --squash-all -t chrony:${CHRONYVERSION}-${proc} -f ./Dockerfile.chrony
+if [[ $(podman volume exists run_chrony;echo $?) -eq 1 ]]; then  
+podman volume create --opt device=tmpfs --opt type=tmpfs --opt o=nodev,noexec,uid=500,gid=500,mode=1750,size=4K run_chrony
+;fi
+
+if [[ $(podman volume exists var_chrony;echo $?) -eq 1 ]]; then  
+podman volume create --opt device=tmpfs --opt type=tmpfs --opt o=nodev,noexec,uid=500,gid=500,mode=1750,size=1M var_chrony
+;fi
+
+podman run -ti --rm  --read-only  \
+    --name chrony \
+    --publish 123:123/udp \
+    --health-cmd 'CMD-SHELL chronyc tracking || exit 1' \
+    --health-interval 15m \
+    --health-start-period 2m \
+    --restart on-failure \
+    --volume /etc/chrony.conf:/etc/chrony.conf:ro \
+    --volume run_chrony:/run/chrony:Z \
+    --volume var_chrony:/var/lib/chrony:rw \
+    -t chrony:${CHRONYVERSION}-${proc}
 
 rm -rf ${sysroot}
