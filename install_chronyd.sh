@@ -28,6 +28,7 @@ fi
 
 podman run -ti --rm  --read-only  \
     --name chrony \
+    --read-only \
     --publish 123:123/udp \
     --health-cmd 'CMD-SHELL chronyc tracking || exit 1' \
     --health-interval 15m \
