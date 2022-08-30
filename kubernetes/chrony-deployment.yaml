@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: chrony
+  name: chrony
+spec:
+  selector:
+    matchLabels:
+      app: chrony
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: chrony
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - command:
+        - /bin/sh
+        - -c
+        - /sbin/chronyd -dUx -u chrony
+        env:
+        - name: PATH
+          value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - name: TERM
+          value: xterm
+        - name: container
+          value: podman
+        - name: PLATFORM_ID
+          value: platform:f36
+        - name: DISTRIB_DESCRIPTION
+          value: Fedora 36 Container
+        - name: TZ
+          value: UTC
+        - name: DISTRIB_ID
+          value: fedora
+        - name: DISTRIB_RELEASE
+          value: "36"
+        - name: LANG
+          value: C.UTF-8
+        image: vpolaris/chrony:4.2-5.fc36
+        name: chrony
+        ports:
+        - containerPort: 123
+          hostPort: 123
+          protocol: UDP
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+          privileged: false
+          readOnlyRootFilesystem: false
+          seLinuxOptions: {}
+        tty: true
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/chrony/chrony.conf
+          subPath: chrony.conf
+        workingDir: /
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - /usr/bin/chronyc tracking || exit 1
+          initialDelaySeconds: 20
+          periodSeconds: 360
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - /usr/bin/chronyc tracking || exit 1
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            memory: "20Mi"
+            cpu: "250m" # 1/4 vcpu
+          limits:
+            memory: "50Mi"
+            cpu: "500m" # 1/2 vcpu
+      dnsConfig: {}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - chrony
+            topologyKey: "kubernetes.io/hostname"
+      securityContext:
+      volumes:
+      - name: config-volume
+        configMap:
+          name: chrony-configmap
+
