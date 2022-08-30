@@ -1,5 +1,5 @@
 # Podman - Minimal Chrony service
-Build from scratch a minimal Fedora 33 image with only chrony service implemented as time server. The goal is to reduce surface attack with only few binary tools onboarded, use chrony user to lauch the service and cost size reduced as much as possible.
+Build from a Fedora 36 image with only chrony service implemented as time server. The goal is to reduce surface attack with only few binary tools onboarded, use chrony user to lauch the service and cost size reduced as much as possible.
 
 ![image](https://user-images.githubusercontent.com/73080749/147420710-87af57fb-e789-40d9-8868-7c2773f9fa45.png)
 
@@ -7,7 +7,7 @@ Build from scratch a minimal Fedora 33 image with only chrony service implemente
 You need to build the image on a machine with podman 3.3.1 installed
 
 ## What the script does ?
- - Pull a fedora 33 container as helper
+ - Pull a fedora 36 container as helper
  - Mount a directory to build the chrony image
  - use fedora container to build the chony service inside the mounted directory
  - archive the mounted directory in a layer.tar.xz
@@ -21,8 +21,8 @@ You need to build the image on a machine with podman 3.3.1 installed
 You can clone the repository or download files 
 
 ``` sh
-git clone https://github.com/vpolaris/contenair-tiny-chrony.f33.git
-cd contenair-tiny-chrony.f33 && chmod u+x install_chronyd.sh 
+git clone https://github.com/vpolaris/container_chrony_f36.git
+cd container_chrony_f36 && chmod u+x install_chronyd.sh 
 sudo ./install_chronyd.sh
 ```
 To schedule the default service use the following command
@@ -38,7 +38,7 @@ podman run -d --read-only  \
     --volume /etc/chrony.conf:/etc/chrony.conf:ro \
     --volume run_chrony:/run/chrony:Z \
     --volume var_chrony:/var/lib/chrony:rw \
-    -t chrony:4.1-1.fc33
+    -t f36:chony
 ```
 
 ## Check
